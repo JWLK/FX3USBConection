@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 0x04B4 / 0x00F0: FX3 -->
+    <usb-device vendor-id="1204" product-id="240" />
+
+    <!-- 0x04B4 / 0x00F1: FX3 -->
+    <usb-device vendor-id="1204" product-id="241" />
+
+    <!-- 0x04B4 / 0x00F3: FX3 Boot Loader -->
+    <usb-device vendor-id="1204" product-id="243" />
+
+    <!-- 0x0781/ 0x5591: USB Loader -->
+    <usb-device vendor-id="1921" product-id="21905" />
+</resources>

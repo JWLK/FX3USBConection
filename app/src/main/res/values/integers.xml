@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--USB Connector VendorID & ProductID -->
+    <integer name="vendorID">0x04B4</integer>
+    <integer name="productID">0x00F1</integer>
+</resources>
