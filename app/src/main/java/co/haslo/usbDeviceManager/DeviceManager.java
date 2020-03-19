@@ -23,43 +23,43 @@ public class DeviceManager {
     private Handler mDeviceHandler;
     private final Object mDeviceHandlerBlockObject;
 
-    private DeviceManager(){
+    private DeviceManager() {
         mDeviceHandler = null;
         mDeviceHandlerBlockObject = new Object();
     }
 
-    public static DeviceManager getInstance(){
-        if(mDeviceManagerInstance != null){
+    public static DeviceManager getInstance() {
+        if(mDeviceManagerInstance != null) {
             return mDeviceManagerInstance;
         }
 
-        synchronized (mSyncBlock){
-            if(mDeviceManagerInstance == null){
+        synchronized (mSyncBlock) {
+            if(mDeviceManagerInstance == null) {
                 mDeviceManagerInstance = new DeviceManager();
             }
         }
         return mDeviceManagerInstance;
     }
 
-    public void loadUSBConnectEventHandler(Handler handler){
-        synchronized (mDeviceHandlerBlockObject){
+    public void loadUSBConnectEventHandler(Handler handler) {
+        synchronized (mDeviceHandlerBlockObject) {
             mDeviceHandler = handler;
         }
 
     }
 
-    public void unloadUSBConnectionEventHandler(Handler handler){
-        synchronized (mDeviceHandlerBlockObject){
+    public void unloadUSBConnectionEventHandler(Handler handler) {
+        synchronized (mDeviceHandlerBlockObject) {
             mDeviceHandler = null;
         }
     }
 
-    public void DeviceManagerClear(){
+    public void DeviceManagerClear() {
         USBMonitoringService.getInstance().USBMonitorClear();
     }
 
-    public void DeviceManagerStart(Context context, Handler handler){
-        synchronized (mDeviceHandlerBlockObject){
+    public void DeviceManagerStart(Context context, Handler handler) {
+        synchronized (mDeviceHandlerBlockObject) {
             mDeviceHandler = handler;
         }
 
@@ -69,7 +69,7 @@ public class DeviceManager {
                 Dlog.i("USB Device Manager Connection Attached");
                 synchronized (mDeviceHandlerBlockObject)
                 {
-                    if(mDeviceHandler != null){
+                    if(mDeviceHandler != null) {
                         Message msg = new Message();
                         msg.what = MSG_USB_CONNECTION;
                         msg.obj = device;
@@ -83,7 +83,7 @@ public class DeviceManager {
                 Dlog.i("USB Device Manager Connection Detached");
                 synchronized (mDeviceHandlerBlockObject)
                 {
-                    if(mDeviceHandler != null){
+                    if(mDeviceHandler != null) {
                         Message msg = new Message();
                         msg.what = MSG_USB_DISCONNECTION;
                         msg.obj = device;

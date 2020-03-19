@@ -16,13 +16,13 @@ public class USBMonitoringService {
         mConnectorList = new LinkedList<USBConnector>();
     }
 
-    public static USBMonitoringService getInstance(){
-        if(mUSBMonitorServiceInstance != null){
+    public static USBMonitoringService getInstance() {
+        if(mUSBMonitorServiceInstance != null) {
             return mUSBMonitorServiceInstance;
         }
 
-        synchronized (mSyncBlock){
-            if(mUSBMonitorServiceInstance == null){
+        synchronized (mSyncBlock) {
+            if(mUSBMonitorServiceInstance == null) {
                 mUSBMonitorServiceInstance = new USBMonitoringService();
             }
         }
@@ -30,7 +30,7 @@ public class USBMonitoringService {
         return mUSBMonitorServiceInstance;
     }
 
-    public void USBMonitorClear(){
+    public void USBMonitorClear() {
         Iterator<USBConnector> usbListInterator = mConnectorList.iterator();
         USBConnector usbConnector;
         while (usbListInterator.hasNext()){
@@ -39,7 +39,7 @@ public class USBMonitoringService {
         }
     }
 
-    public void USBMonitorStart(Context context, int vendorID, int productID, String className, USBConnectionListener usbListener){
+    public void USBMonitorStart(Context context, int vendorID, int productID, String className, USBConnectionListener usbListener) {
         USBConnector connector = new USBConnector(context, vendorID, productID, className, usbListener);
         connector.USBLoadDeviceList();
         mConnectorList.add(connector);

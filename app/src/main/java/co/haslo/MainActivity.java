@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    private String getLogcat(){
+    private String getLogcat() {
         try {
             log = new StringBuilder();
             logcat = Runtime.getRuntime().exec("logcat -d -v time");
