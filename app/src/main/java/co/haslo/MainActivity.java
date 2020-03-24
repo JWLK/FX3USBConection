@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import co.haslo.usbDeviceManager.DeviceCommunicator;
+import co.haslo.usbDeviceManager.DeviceHandler;
 import co.haslo.usbDeviceManager.DeviceManager;
 import co.haslo.util.Dlog;
 
@@ -25,8 +28,7 @@ public class MainActivity extends Activity {
 
     public static boolean DEBUG = false;
 
-    private DeviceManager mDeviceManager;
-    private Handler mDeviceHandler;
+    private DeviceHandler mDeviceHandler = new DeviceHandler(this);
 
     /*System Element*/
     Process logcat;
@@ -48,6 +50,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         this.DEBUG = isDebuggable(this);
         Dlog.i("Start");
+
+        /**
+         * Handler Start
+         */
+
+        mDeviceHandler.initialize();
 
         /**
          * Log Box Setting
@@ -128,9 +136,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Dlog.d("onStart");
-
-        mDeviceManager = DeviceManager.getInstance();
-        mDeviceManager.DeviceManagerStart(this.getApplicationContext(), mDeviceHandler);
+        mDeviceHandler.handlingStart();
     }
 
     @Override
@@ -149,8 +155,12 @@ public class MainActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Dlog.d("onStop");
+        mDeviceHandler.handlingStop();
+        Dlog.i("Device Handler Stop And Reset Complete");
+        mDeviceHandler.handlingClear();
+        Dlog.i("Device Handler Clear Complete");
 
-        mDeviceManager.DeviceManagerClear();
+        Dlog.i("onStop Completed");
     }
 
     @Override

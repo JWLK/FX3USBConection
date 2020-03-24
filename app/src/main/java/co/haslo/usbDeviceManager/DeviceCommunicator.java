@@ -21,7 +21,8 @@ public class DeviceCommunicator {
      * Register Address Setting
      */
 
-    private static final byte CMD_SET_READN = (byte) 0xA0;
+    private static final byte REQUEST_ID_SEND = (byte) 0xA0;
+    private static final byte REQUEST_ID_RESET = (byte) 0xF0;
 
     private UsbDeviceConnection mUsbDeviceConnection = null;
     private UsbInterface mUsbInterface = null;
@@ -107,6 +108,40 @@ public class DeviceCommunicator {
         }
     }
 
+    public int DataTransferSingleWrite(short address, short data){
+        int length = 0;
+        byte[] buffer = new byte[4];
+
+        buffer[0] = (byte) ((address & 0xff00) >> 8);
+        buffer[1] = (byte) ((address & 0x00ff) );
+        buffer[2] = (byte) ((data & 0xff00) >> 8);
+        buffer[3] = (byte) ((data & 0x00ff) );
+
+        try {
+
+            length = SendControlTransfer(REQUEST_ID_SEND, buffer.length, buffer);
+
+        } catch (IOException e) {
+            Dlog.e("DataTransferSingleWrite Error :" + e);
+            e.printStackTrace();
+        }
+
+
+        return length;
+    }
+
+    public void DataTransferReset(){
+        byte[] buffer = {0,0,0,0};
+
+        try {
+
+            SendControlTransfer(REQUEST_ID_RESET, buffer.length, buffer);
+
+        } catch (IOException e) {
+            Dlog.e("DataTransferReset Error :" + e);
+            e.printStackTrace();
+        }
+    }
 
 
 

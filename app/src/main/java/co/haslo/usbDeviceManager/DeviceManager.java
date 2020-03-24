@@ -5,6 +5,8 @@ import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Message;
 
+import java.io.IOException;
+
 import co.haslo.R;
 import co.haslo.usbDeviceElement.USBConnectionListener;
 import co.haslo.usbDeviceElement.USBMonitoringService;
@@ -41,6 +43,10 @@ public class DeviceManager {
         return mDeviceManagerInstance;
     }
 
+    public DeviceCommunicator CreateDeviceCommunicator(Context context, UsbDevice device) throws IOException {
+        return new DeviceCommunicator(context, device);
+    }
+
     public void loadUSBConnectEventHandler(Handler handler) {
         synchronized (mDeviceHandlerBlockObject) {
             mDeviceHandler = handler;
@@ -54,11 +60,11 @@ public class DeviceManager {
         }
     }
 
-    public void DeviceManagerClear() {
+    public void DeviceManagerMonitoringClear() {
         USBMonitoringService.getInstance().USBMonitorClear();
     }
 
-    public void DeviceManagerStart(Context context, Handler handler) {
+    public void DeviceManagerMonitoringStart(Context context, Handler handler) {
         synchronized (mDeviceHandlerBlockObject) {
             mDeviceHandler = handler;
         }
