@@ -18,8 +18,7 @@ public class DeviceHandler extends Handler {
     //private DirectDataTransfer mDirectDataTransfer;
     //private PropertyManager mPropertyManager;
 
-    private SimpleDateFormat formatPrint = new SimpleDateFormat( "yyyy.MM.dd HH:mm");
-    private SimpleDateFormat formatCompare = new SimpleDateFormat ( "ss");
+    private SimpleDateFormat formatPrint = new SimpleDateFormat( "yyyy.MM.dd HH:mm:ss");
 
     private Thread mUSBRealTimeController = new Thread(){
         @Override
@@ -28,8 +27,15 @@ public class DeviceHandler extends Handler {
 
                 Date currentTime = new Date();
                 String printString = formatPrint.format(currentTime);
-                if(formatCompare.format(formatCompare) == "30"){
                     Dlog.i(printString);
+
+                try
+                {
+                    Thread.sleep(10000);
+                }
+                catch (InterruptedException e)
+                {
+                    Dlog.e("mUSBRealTimeController Error : " + e );
                 }
 
             }
