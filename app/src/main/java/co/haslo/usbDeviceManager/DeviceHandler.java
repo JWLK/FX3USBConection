@@ -1,7 +1,9 @@
 package co.haslo.usbDeviceManager;
 
+import android.hardware.usb.UsbDevice;
 import android.icu.text.SimpleDateFormat;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.util.Date;
@@ -46,21 +48,37 @@ public class DeviceHandler extends Handler {
         mainActivity = activity;
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         //mDirectDataTransfer = DirectDataTransfer.getInstance();
         mUSBRealTimeController.start();
-
     }
 
-    public void handlingStart()
-    {
+    public void handleMessage(Message msg) {
+        UsbDevice device = (UsbDevice) msg.obj;
+
+        if(msg.what == DeviceManager.MSG_USB_CONNECTION) {
+            Dlog.i("Device Manager Monitoring Service Send Message : On USB Conneted");
+            try {
+                mDeviceCommunicator = mDeviceManager.CreateDeviceCommunicator(mainActivity.getApplicationContext(), device);
+            } catch (Exception e) {
+                Dlog.e("handleMessage Error "+ e );
+            }
+
+            if(mDeviceCommunicator != null) {
+
+            }
+        } else {
+            Dlog.i("Device Manager Monitoring Service Send Message : On USB DisConnected");
+            handlingClear();
+        }
+    }
+
+    public void handlingStart() {
         mDeviceManager = DeviceManager.getInstance();
         mDeviceManager.DeviceManagerMonitoringStart(mainActivity.getApplicationContext(), this);
     }
 
-    public void handlingStop()
-    {
+    public void handlingStop() {
         if(mDeviceCommunicator != null)
         {
             try
@@ -77,8 +95,7 @@ public class DeviceHandler extends Handler {
         mDeviceManager.DeviceManagerMonitoringClear();
     }
 
-    public void handlingClear()
-    {
+    public void handlingClear() {
         //mDirectDataTransfer.deregisterDeviceCommunicator();
         mDeviceCommunicator = null;
 
