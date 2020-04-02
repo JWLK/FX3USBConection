@@ -14,7 +14,7 @@ public class DeviceDataTransfer {
 
     private Thread mDataTransferThread;
     private DeviceCommunicator mDeviceCommunicator;
-    private final Object mDataTransferBlock = new Object();
+    private final Object mDataTransferBlock;
 
 
     private class DeviceDataTransferThread extends Thread {
@@ -61,6 +61,67 @@ public class DeviceDataTransfer {
 
         }
 
+    }
+
+    private DeviceDataTransfer() {
+        mDataTransferThread = null;
+        mDataTransferBlock = new Object();
+        mDeviceCommunicator = null;
+
+
+    }
+
+    public static DeviceDataTransfer getInstance() {
+        if(mDataTransferInstance != null) {
+            return mDataTransferInstance;
+        }
+        synchronized (mSyncBlock) {
+            if(mDataTransferInstance == null) {
+                mDataTransferInstance = new DeviceDataTransfer();
+            }
+        }
+        return mDataTransferInstance;
+    }
+
+
+    //Communicator Set && Thread Start
+    public void registerDeviceCommunicator(DeviceCommunicator communicator) {
+        Dlog.i("Device Communicator Setting...");
+        synchronized (mDataTransferBlock) {
+            _interruptThreadAndReleaseUSB();
+            mDeviceCommunicator = communicator;
+            mDataTransferThread = new DeviceDataTransferThread();
+            mDataTransferThread.start();
+        }
+        Dlog.i("Device Communicator Setting Complete!");
+    }
+
+    private void _interruptThreadAndReleaseUSB() {
+        Dlog.i("Interrupt Thread Connection trying...");
+
+        if(mDataTransferThread != null){
+            mDataTransferThread.interrupt();
+            try {
+                mDataTransferThread.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mDataTransferThread = null;
+        }
+        if(mDeviceCommunicator != null) {
+            mDeviceCommunicator.Clear();
+            mDeviceCommunicator = null;
+        }
+        Dlog.i("Interrupt Thread Connection Complete!");
+    }
+
+    public void deregisterDeivceCommunicator() {
+        Dlog.i("Device Communicator Resetting...");
+        synchronized (mDataTransferBlock)
+        {
+            _interruptThreadAndReleaseUSB();
+        }
+        Dlog.i("Device Communicator Reset Complete!");
     }
 
 }

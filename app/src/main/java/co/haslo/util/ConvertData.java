@@ -27,15 +27,6 @@ public class ConvertData {
      *
      */
 
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
-        }
-        return data;
-    }
 
 
     public static String byteArrayToHexString(byte[] bytes){
@@ -48,6 +39,30 @@ public class ConvertData {
         }
 
         return sb.toString();
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+
+    public static short[] hexStringToShortArray(String s) {
+        int len = s.length();
+        byte[] dataByte;
+        short[] dataShort = new short[len / 4];
+
+        dataByte = hexStringToByteArray(s);
+
+        for (int i = 0, counter = 0 ; i < dataByte.length; i += 2, counter++) {
+            dataShort[counter] = (short) ( (dataByte[i] & 0xFF) << 8 | (dataByte[i+1] & 0xFF) ) ;
+        }
+        return dataShort;
     }
 
 }

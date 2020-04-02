@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +23,9 @@ import java.io.InputStreamReader;
 import co.haslo.usbDeviceManager.DeviceCommunicator;
 import co.haslo.usbDeviceManager.DeviceHandler;
 import co.haslo.usbDeviceManager.DeviceManager;
+import co.haslo.usbDeviceManager.DeviceRegisterSetting;
 import co.haslo.util.Dlog;
+
 
 public class MainActivity extends Activity {
 
@@ -35,7 +38,7 @@ public class MainActivity extends Activity {
     StringBuilder log = null;
 
     /*XML Element*/
-    TextView logBoxText;
+    public TextView logBoxText;
 
     Button menuBoxClearButton;
     Button menuBoxLoadButton;
@@ -71,9 +74,10 @@ public class MainActivity extends Activity {
         menuBoxClearButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dlog.i("menuBoxClearButton");
+                //Dlog.i("menuBoxClearButton");
                 logBoxText.setText(null);
                 clearLogcatLog();
+                mDeviceHandler.lengthSaver = 0;
             }
         });
 
@@ -82,8 +86,8 @@ public class MainActivity extends Activity {
         menuBoxLoadButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dlog.i("menuBoxLoadButton");
-                logBoxText.setText(getLogcat());
+                //Dlog.i("menuBoxLoadButton");
+                setLogcat();
             }
         });
 
@@ -96,14 +100,31 @@ public class MainActivity extends Activity {
         sendBoxButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dlog.i("sendBoxButton");
-                logBoxText.append(sendBoxEdit.getText() + System.lineSeparator());
-                sendBoxEdit.getText().clear();
+                //Dlog.i("sendBoxButton");
+                String sendBoxData = sendBoxEdit.getText().toString();
+                int sendBoxDataLength = sendBoxData.length();
+                Dlog.i("Data Length : " + sendBoxDataLength + System.lineSeparator() );
+                if (sendBoxDataLength == 0) {
+                    return;
+                } else if(sendBoxDataLength == 8){
+                    //logBoxText.append(sendBoxData + System.lineSeparator());
+                    Dlog.i("Hex Number : " + sendBoxData + System.lineSeparator() );
+                    mDeviceHandler.sendData(sendBoxData);
+                    sendBoxEdit.getText().clear();
+                } else {
+                    Toast warningMessage = Toast.makeText(getApplicationContext(),"Please Enter 8 Hexadecimal numbers ", Toast.LENGTH_SHORT);
+                    warningMessage.show();
+                }
+                //logBoxText.setText(getLogcat());
             }
         });
     }
 
-    private String getLogcat() {
+    public void setLogcat(){
+        logBoxText.setText(getLogcat());
+    }
+
+    public String getLogcat() {
         try {
             log = new StringBuilder();
             logcat = Runtime.getRuntime().exec("logcat -d -v time");
@@ -127,7 +148,7 @@ public class MainActivity extends Activity {
         try {
             @SuppressWarnings("unused")
             Process process = Runtime.getRuntime().exec("logcat -b all -c");
-            log = null;
+            logBoxText.append("Please Click Load");
         } catch (IOException e) {
             e.printStackTrace();
         }

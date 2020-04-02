@@ -5,19 +5,26 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 import co.haslo.MainActivity;
 import co.haslo.util.Dlog;
+import co.haslo.util.InterfaceUtil;
 
 
 public class DeviceHandler extends Handler {
 
+    public int lengthSaver = 0;
+
     private MainActivity mainActivity;
     private DeviceManager mDeviceManager;
     private DeviceCommunicator mDeviceCommunicator;
-    //private DirectDataTransfer mDirectDataTransfer;
+    private DeviceDataTransfer mDeviceDataTransfer;
     //private PropertyManager mPropertyManager;
 
     private SimpleDateFormat formatPrint = new SimpleDateFormat( "yyyy.MM.dd HH:mm:ss");
@@ -29,15 +36,22 @@ public class DeviceHandler extends Handler {
 
                 Date currentTime = new Date();
                 String printString = formatPrint.format(currentTime);
-                    Dlog.i(printString);
+                //Dlog.i(printString);
 
                 try
                 {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
+                    if(mainActivity.getLogcat().length() > lengthSaver){
+                        lengthSaver = mainActivity.getLogcat().length();
+                        mainActivity.setLogcat();
+                        InterfaceUtil.scrollBottom(mainActivity.logBoxText);
+                    }
                 }
-                catch (InterruptedException e)
-                {
-                    Dlog.e("mUSBRealTimeController Error : " + e );
+                catch (InterruptedException e) {
+                    Dlog.e("mUSBRealTimeController Thread Error : " + e );
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -49,7 +63,7 @@ public class DeviceHandler extends Handler {
     }
 
     public void initialize() {
-        //mDirectDataTransfer = DirectDataTransfer.getInstance();
+        mDeviceDataTransfer = DeviceDataTransfer.getInstance();
         mUSBRealTimeController.start();
     }
 
@@ -57,7 +71,7 @@ public class DeviceHandler extends Handler {
         UsbDevice device = (UsbDevice) msg.obj;
 
         if(msg.what == DeviceManager.MSG_USB_CONNECTION) {
-            Dlog.i("Device Manager Monitoring Service Send Message : On USB Conneted");
+            Dlog.i("Device Manager Monitoring Service Send Message : On USB Connected");
             try {
                 mDeviceCommunicator = mDeviceManager.CreateDeviceCommunicator(mainActivity.getApplicationContext(), device);
             } catch (Exception e) {
@@ -65,7 +79,7 @@ public class DeviceHandler extends Handler {
             }
 
             if(mDeviceCommunicator != null) {
-
+                mDeviceDataTransfer.registerDeviceCommunicator(mDeviceCommunicator);
             }
         } else {
             Dlog.i("Device Manager Monitoring Service Send Message : On USB DisConnected");
@@ -81,23 +95,30 @@ public class DeviceHandler extends Handler {
     public void handlingStop() {
         if(mDeviceCommunicator != null)
         {
-            try
-            {
-                Dlog.i("try freeze");
+            try {
+                Dlog.i("Set freeze");
                 //DeviceSetting.sendFreeze(mDeviceCommunicator);
-                Dlog.i("try freeze");
-            }
-            catch(Exception e)
-            {
-                Dlog.e("send device freeze error : " + e.getMessage());
+                Dlog.i("Complete freeze");
+            } catch(Exception e) {
+                Dlog.e("Send device freeze error : " + e.getMessage());
             }
         }
         mDeviceManager.DeviceManagerMonitoringClear();
     }
 
     public void handlingClear() {
-        //mDirectDataTransfer.deregisterDeviceCommunicator();
+        mDeviceDataTransfer.deregisterDeivceCommunicator();
         mDeviceCommunicator = null;
+
+    }
+
+    public void sendData(String hexDataString) {
+        if(mDeviceCommunicator != null) {
+            DeviceRegisterSetting.writeCommandHexData(mDeviceCommunicator, hexDataString);
+        } else {
+            Toast warningMessage = Toast.makeText(mainActivity.getApplicationContext(),"Please Connect USB Device: "+mDeviceCommunicator, Toast.LENGTH_SHORT);
+            warningMessage.show();
+        }
 
     }
 
