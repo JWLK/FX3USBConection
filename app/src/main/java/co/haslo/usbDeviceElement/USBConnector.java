@@ -50,7 +50,7 @@ public class USBConnector {
             String actionName = intent.getAction();
             Dlog.d("USB Broadcast Action Name :" + actionName.toString());
 
-            if(UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(actionName)){
+            if(UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(actionName) || UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(actionName)){
 
                 Toast.makeText(context, "USB Attached Action : "+actionName , Toast.LENGTH_SHORT).show();
 
@@ -61,11 +61,12 @@ public class USBConnector {
                         mUSBListener.onUsbConnected(device);
                     } else {
                         // #1
+                        Dlog.i("USB Need Permission.");
                         USBRequestPermission(device);
                     }
                 }
 
-            } else if(UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(actionName)){
+            } else if(UsbManager.ACTION_USB_DEVICE_DETACHED.equals(actionName) || UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(actionName)){
 
                 Toast.makeText(context, "USB Detached Action : "+actionName , Toast.LENGTH_SHORT).show();
 
@@ -84,16 +85,24 @@ public class USBConnector {
      */
     // #1
     private void USBRequestPermission(UsbDevice device) {
+        Dlog.i("USB Permission Init");
         PendingIntent intent = PendingIntent.getBroadcast(mContext, 0, new Intent(mClassName), 0);
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 mContext.unregisterReceiver(this);
                 if(intent.getAction().equals(mClassName)) {
+                    Dlog.i("USB Permission getAction Class");
                     if(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)){
+                        Dlog.i("USB Permission UsbManager.EXTRA_PERMISSION_GRANTED" );
+
                         UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if(device != null) {
+                            Dlog.i("USB Permission Device Not Null Check");
+
                             if(device.getVendorId() == mVendorID && device.getProductId() == mProductID) {
+
+                                Dlog.i("USB Permission Device Not Null Check");
                                 mUSBListener.onUsbConnected(device);
                             }
                         }
@@ -118,7 +127,7 @@ public class USBConnector {
         for (UsbDevice device : deviceList.values() ) {
             Dlog.d("Device List : " + String.format("Vendor_ID : %04X / Product_ID : %04X", device.getVendorId(), device.getProductId()));
             Toast.makeText(mContext.getApplicationContext(), String.format("Vendor_ID : %04X / Product_ID : %04X", device.getVendorId(), device.getProductId()), Toast.LENGTH_LONG).show();
-            if(device.getProductId() == mVendorID && device.getProductId() == mProductID) {
+            if(device.getVendorId() == mVendorID && device.getProductId() == mProductID) {
                 Dlog.i("USB Device Already Connected!");
                 Dlog.d("USB Device Info : " + device.getDeviceName());
                 if(!mUSBManager.hasPermission(device)){
@@ -128,6 +137,8 @@ public class USBConnector {
                     mUSBListener.onUsbConnected(device);
                 }
                 break;
+            } else {
+                Dlog.i("USB Device Check Vendor ID AND Product ID " + (device.getVendorId() == mVendorID) + " / "+ (device.getProductId() == mProductID) );
             }
         }
         if(deviceList.size() == 0) {

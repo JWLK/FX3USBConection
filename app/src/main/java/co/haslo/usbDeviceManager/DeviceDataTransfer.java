@@ -33,30 +33,33 @@ public class DeviceDataTransfer {
                 try
                 {
                     readSize = mDeviceCommunicator.ReadBulkTransfer(readBuffer, 0, defaultReadSize);
-
                     if(isInterrupted()) {
                         Dlog.i("Thread is interrupted");
                         break;
                     }
-                    for(int i = 0; i < defaultReadSize; i+=4) {
-                        byte Data03 = readBuffer[i + 3];
-                        byte Data02 = readBuffer[i + 2];
-                        byte Data01 = readBuffer[i + 1];
-                        byte Data00 = readBuffer[i + 0];
-                        byte[] DataArray = {Data03,Data02,Data01,Data00};
-                        Dlog.i(ConvertData.byteArrayToHexString(DataArray));
-                    }
 
                 } catch (Exception e) {
-
                     Dlog.e("Thread Read Exception : " + e);
-
                     readSize = -1;
                 }
 
                 if(readSize <= 0) {
                     continue;
+                } else {
+                    Dlog.i("DeviceDataTransferThread readSize : "+ readSize);
                 }
+
+
+                for(int i = 0; i < defaultReadSize; i+=4) {
+                    byte Data03 = readBuffer[i + 3];
+                    byte Data02 = readBuffer[i + 2];
+                    byte Data01 = readBuffer[i + 1];
+                    byte Data00 = readBuffer[i + 0];
+                    byte[] DataArray = {Data03,Data02,Data01,Data00};
+                    //Dlog.i(i +" - "+ConvertData.byteArrayToHexString(DataArray));
+                }
+
+
             }
 
         }
@@ -67,7 +70,6 @@ public class DeviceDataTransfer {
         mDataTransferThread = null;
         mDataTransferBlock = new Object();
         mDeviceCommunicator = null;
-
 
     }
 
@@ -116,7 +118,7 @@ public class DeviceDataTransfer {
     }
 
     public void deregisterDeivceCommunicator() {
-        Dlog.i("Device Communicator Resetting...");
+        Dlog.i("Device Communicator Resetting`...");
         synchronized (mDataTransferBlock)
         {
             _interruptThreadAndReleaseUSB();

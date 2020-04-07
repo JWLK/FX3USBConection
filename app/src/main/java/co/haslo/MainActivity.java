@@ -27,6 +27,7 @@ import co.haslo.usbDeviceManager.DeviceRegisterSetting;
 import co.haslo.util.Dlog;
 
 
+
 public class MainActivity extends Activity {
 
     public static boolean DEBUG = false;
@@ -42,6 +43,8 @@ public class MainActivity extends Activity {
 
     Button menuBoxClearButton;
     Button menuBoxLoadButton;
+    Button menuBoxSetButton;
+    Button menuBoxStartButton;
 
     EditText sendBoxEdit;
     Button sendBoxButton;
@@ -81,7 +84,9 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Load
+        /**
+         * Load Button
+         */
         menuBoxLoadButton = (Button)findViewById(R.id.menu_box_load_button);
         menuBoxLoadButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -91,6 +96,27 @@ public class MainActivity extends Activity {
             }
         });
 
+        /**
+         * Set Button
+         */
+        menuBoxSetButton =(Button)findViewById(R.id.menu_box_counterSet);
+        menuBoxSetButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDeviceHandler.setCounter();
+            }
+        });
+
+        /**
+         * Start Button
+         */
+        menuBoxStartButton =(Button)findViewById(R.id.menu_box_counterStart);
+        menuBoxStartButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDeviceHandler.startCounter();
+            }
+        });
         /**
          * Send Box Setting
          */
@@ -171,31 +197,31 @@ public class MainActivity extends Activity {
         super.onPause();
         Dlog.d("onPause");
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Dlog.d("onStop");
-        mDeviceHandler.handlingStop();
-        Dlog.i("Device Handler Stop And Reset Complete");
-        mDeviceHandler.handlingClear();
-        Dlog.i("Device Handler Clear Complete");
-
-        Dlog.i("onStop Completed");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Dlog.d("onDestroy");
-    }
-
-    @Override
-    public void onBackPressed() {
-        Dlog.d("Application Finsih");
-        finish();
-    }
-
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Dlog.d("onStop");
+//        mDeviceHandler.handlingStop();
+//        Dlog.i("Device Handler Stop And Reset Complete");
+//        mDeviceHandler.handlingClear();
+//        Dlog.i("Device Handler Clear Complete");
+//
+//        Dlog.i("onStop Completed");
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        Dlog.d("onDestroy");
+//    }
+//
+//    @Override
+//    public void onBackPressed() {
+//        Dlog.d("Application Finish");
+//        finish();
+//    }
+//
 
 
     /**

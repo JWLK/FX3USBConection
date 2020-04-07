@@ -41,11 +41,11 @@ public class DeviceHandler extends Handler {
                 try
                 {
                     Thread.sleep(1000);
-                    if(mainActivity.getLogcat().length() > lengthSaver){
-                        lengthSaver = mainActivity.getLogcat().length();
-                        mainActivity.setLogcat();
-                        InterfaceUtil.scrollBottom(mainActivity.logBoxText);
-                    }
+//                    if(mainActivity.getLogcat().length() > lengthSaver){
+//                        lengthSaver = mainActivity.getLogcat().length();
+//                        mainActivity.setLogcat();
+//                        InterfaceUtil.scrollBottom(mainActivity.logBoxText);
+//                    }
                 }
                 catch (InterruptedException e) {
                     Dlog.e("mUSBRealTimeController Thread Error : " + e );
@@ -121,6 +121,17 @@ public class DeviceHandler extends Handler {
         }
 
     }
+
+    public void setCounter() {
+        //DeviceRegisterSetting.counterSet(mDeviceCommunicator);
+        Dlog.i("Set Data");
+        mDeviceCommunicator.DataTransferReset();
+    }
+    public void startCounter() {
+        DeviceRegisterSetting.counterStart(mDeviceCommunicator);
+    }
+
+
 
 
 }

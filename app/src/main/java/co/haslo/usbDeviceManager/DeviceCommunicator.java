@@ -10,6 +10,7 @@ import android.hardware.usb.UsbManager;
 
 import java.io.IOException;
 
+import co.haslo.util.ConvertData;
 import co.haslo.util.Dlog;
 
 public class DeviceCommunicator {
@@ -24,9 +25,9 @@ public class DeviceCommunicator {
     private static final byte REQUEST_ID_SEND = (byte) 0xA0;
     private static final byte REQUEST_ID_RESET = (byte) 0xF0;
 
-    private UsbDeviceConnection mUsbDeviceConnection = null;
-    private UsbInterface mUsbInterface = null;
-    private UsbEndpoint mUsbEndpoint = null;
+    private UsbDeviceConnection mUsbDeviceConnection;
+    private UsbInterface mUsbInterface;
+    private UsbEndpoint mUsbEndpoint;
 
 
     DeviceCommunicator(Context context, UsbDevice device) throws IOException {
@@ -42,18 +43,20 @@ public class DeviceCommunicator {
             throw new IOException("Device Connection Error");
         }
 
-        if(mUsbEndpoint == null) {
-            Dlog.e("UsbEndpoint not Exist");
-            throw new IOException("Device Endpoint Error");
+        if(mUsbInterface == null) {
+            Dlog.e("UsbInferface Exist");
+            throw new IOException("Device Interface Error");
         }
 
         if(!mUsbDeviceConnection.claimInterface(mUsbInterface, true)) {
             //This must be done before sending or receiving data on any UsbEndpoints belonging to the interface.
-            Dlog.e("Usb ClaimInterface Test Faile");
+            Dlog.e("Usb ClaimInterface Test Failed");
             throw new IOException("Device USB ClaimInterface Error");
         }
 
         mUsbEndpoint = mUsbInterface.getEndpoint(0);
+
+        Dlog.d("USB EndpointType : " + mUsbEndpoint.getType() );
 
     }
 
@@ -63,11 +66,16 @@ public class DeviceCommunicator {
     private synchronized int SendControlTransfer(int request, int value, byte[] buffer) throws IOException {
         int commandLength = 0;
 
+        if (mUsbDeviceConnection == null) {
+            throw new IOException("mConnection is null.");
+        } else {
+            Dlog.i("mConnection : "+ mUsbDeviceConnection);
+        }
+
         //length of data transferred (or zero) for success, or negative value for failure
         //Error code, Prevention of Data Leakage case
-        commandLength = mUsbDeviceConnection.controlTransfer(USBRequestTypeOut, request, value, 0, buffer, (buffer == null) ? 0 : buffer.length, 3000);
-        commandLength = mUsbDeviceConnection.controlTransfer(USBRequestTypeOut, request, value, 0, buffer, (buffer == null) ? 0 : buffer.length, 3000);
-        commandLength = mUsbDeviceConnection.controlTransfer(USBRequestTypeOut, request, value, 0, buffer, (buffer == null) ? 0 : buffer.length, 3000);
+        commandLength = mUsbDeviceConnection.controlTransfer(USBRequestTypeOut, request, value, 0, buffer, (buffer == null) ? 0 : buffer.length, 5000);
+        commandLength = mUsbDeviceConnection.controlTransfer(USBRequestTypeOut, request, value, 0, buffer, (buffer == null) ? 0 : buffer.length, 5000);
 
         return commandLength;
     }
@@ -92,16 +100,23 @@ public class DeviceCommunicator {
         return commandLength;
     }
 
+    public int WriteBulkTransfer(byte[] buffer, int offset, int length)
+    {
+        return mUsbDeviceConnection.bulkTransfer(mUsbEndpoint, buffer, offset, length, 500);
+    }
+
     public int ReadBulkTransfer(byte[] buffer, int offset, int length)
     {
         return mUsbDeviceConnection.bulkTransfer(mUsbEndpoint, buffer, offset, length, 500);
     }
 
+
+
     public void Clear() {
         try {
             boolean release = false;
             release = mUsbDeviceConnection.releaseInterface(mUsbInterface);
-            Dlog.d("Device Communicator Clear" + release);
+            Dlog.d("Device Communicator Clear " + release);
             mUsbDeviceConnection.close();
         } catch (Exception e) {
             Dlog.e("Device Communicator Clear Exception Error");
@@ -131,16 +146,20 @@ public class DeviceCommunicator {
     }
 
     public void DataTransferReset(){
-        byte[] buffer = {0,0,0,0};
+        int length = 0;
 
-        try {
+        byte[] buffer = new byte[16384];
 
-            SendControlTransfer(REQUEST_ID_RESET, buffer.length, buffer);
-
-        } catch (IOException e) {
-            Dlog.e("DataTransferReset Error :" + e);
-            e.printStackTrace();
+        for(int i = 0; i < 16384; i+=4) {
+            buffer[i] = 0;
+            buffer[i+1] = 0;
+            buffer[i+2] = 0;
+            buffer[i+3] = 0;
         }
+
+        length = WriteBulkTransfer(buffer, 0, buffer.length);
+        Dlog.i("DataTransferReset Length : "+ length);
+
     }
 
 

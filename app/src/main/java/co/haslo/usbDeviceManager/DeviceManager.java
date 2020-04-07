@@ -16,8 +16,12 @@ public class DeviceManager {
     private static DeviceManager mDeviceManagerInstance = null;
     private static final Object mSyncBlock = new Object();
 
-    private static final int mVendorID = R.integer.vendorID;
-    private static final int mProductID = R.integer.productID;
+    private static final int mVendorID = 0x04B4;
+    private static final int mProductID = 0x00F1;
+
+    //private static final int mVendorID = 0x05AC;
+    //private static final int mProductID = 0x166A;
+
     private static final String ACTION_USB_PERMISSION = "co.haslo.USB_PERMISSION";
 
     public static final int MSG_USB_CONNECTION = 0;

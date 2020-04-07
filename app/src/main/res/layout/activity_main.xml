@@ -94,7 +94,7 @@
 
         <Button
             android:id="@+id/menu_box_clear_button"
-            android:layout_weight="0.6"
+            android:layout_weight="0.4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="Clear Log Box"
@@ -113,11 +113,21 @@
             android:background="@drawable/custom_button"
             android:layout_margin="5dp"/>
         <Button
-            android:id="@+id/menu_box_none01"
+            android:id="@+id/menu_box_counterSet"
             android:layout_weight="0.2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="none"
+            android:text="SET"
+            android:textSize="15sp"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/custom_button"
+            android:layout_margin="5dp"/>
+        <Button
+            android:id="@+id/menu_box_counterStart"
+            android:layout_weight="0.2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="START"
             android:textSize="15sp"
             android:textColor="@color/colorWhite"
             android:background="@drawable/custom_button"

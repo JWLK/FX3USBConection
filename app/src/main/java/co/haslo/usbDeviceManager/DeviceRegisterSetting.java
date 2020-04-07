@@ -21,4 +21,14 @@ public class DeviceRegisterSetting {
 
     }
 
+    public static void counterSet(DeviceCommunicator device)
+    {
+        device.DataTransferSingleWrite((short) 0x9801, (short) 0x00FF);
+    }
+
+
+    public static void counterStart(DeviceCommunicator device)
+    {
+        device.DataTransferSingleWrite((short) 0x9800, (short) 0x0003);
+    }
 }
