@@ -197,31 +197,31 @@ public class MainActivity extends Activity {
         super.onPause();
         Dlog.d("onPause");
     }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        Dlog.d("onStop");
-//        mDeviceHandler.handlingStop();
-//        Dlog.i("Device Handler Stop And Reset Complete");
-//        mDeviceHandler.handlingClear();
-//        Dlog.i("Device Handler Clear Complete");
-//
-//        Dlog.i("onStop Completed");
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Dlog.d("onDestroy");
-//    }
-//
-//    @Override
-//    public void onBackPressed() {
-//        Dlog.d("Application Finish");
-//        finish();
-//    }
-//
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Dlog.d("onStop");
+        mDeviceHandler.handlingStop();
+        Dlog.i("Device Handler Stop And Reset Complete");
+        mDeviceHandler.handlingClear();
+        Dlog.i("Device Handler Clear Complete");
+
+        Dlog.i("onStop Completed");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Dlog.d("onDestroy");
+    }
+
+    @Override
+    public void onBackPressed() {
+        Dlog.d("Application Finish");
+        finish();
+    }
+
 
 
     /**

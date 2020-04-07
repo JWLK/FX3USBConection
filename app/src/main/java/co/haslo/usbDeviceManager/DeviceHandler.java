@@ -36,16 +36,16 @@ public class DeviceHandler extends Handler {
 
                 Date currentTime = new Date();
                 String printString = formatPrint.format(currentTime);
-                //Dlog.i(printString);
+                //Dlog.i(printString); // Timer
 
                 try
                 {
                     Thread.sleep(1000);
-//                    if(mainActivity.getLogcat().length() > lengthSaver){
-//                        lengthSaver = mainActivity.getLogcat().length();
-//                        mainActivity.setLogcat();
-//                        InterfaceUtil.scrollBottom(mainActivity.logBoxText);
-//                    }
+                    if(mainActivity.getLogcat().length() > lengthSaver){
+                        lengthSaver = mainActivity.getLogcat().length();
+                        mainActivity.setLogcat();
+                        InterfaceUtil.scrollBottom(mainActivity.logBoxText);
+                    }
                 }
                 catch (InterruptedException e) {
                     Dlog.e("mUSBRealTimeController Thread Error : " + e );
@@ -123,11 +123,11 @@ public class DeviceHandler extends Handler {
     }
 
     public void setCounter() {
-        //DeviceRegisterSetting.counterSet(mDeviceCommunicator);
         Dlog.i("Set Data");
-        mDeviceCommunicator.DataTransferReset();
+        DeviceRegisterSetting.counterSet(mDeviceCommunicator);
     }
     public void startCounter() {
+        Dlog.i("Start Data");
         DeviceRegisterSetting.counterStart(mDeviceCommunicator);
     }
 

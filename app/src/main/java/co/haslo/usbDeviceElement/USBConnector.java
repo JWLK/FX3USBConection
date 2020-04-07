@@ -92,17 +92,17 @@ public class USBConnector {
             public void onReceive(Context context, Intent intent) {
                 mContext.unregisterReceiver(this);
                 if(intent.getAction().equals(mClassName)) {
-                    Dlog.i("USB Permission getAction Class");
+                    //Dlog.i("USB Permission getAction Class");
                     if(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)){
-                        Dlog.i("USB Permission UsbManager.EXTRA_PERMISSION_GRANTED" );
+                        //Dlog.i("USB Permission UsbManager.EXTRA_PERMISSION_GRANTED" );
 
                         UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if(device != null) {
-                            Dlog.i("USB Permission Device Not Null Check");
+                            //Dlog.i("USB Permission Device Not Null Check");
 
                             if(device.getVendorId() == mVendorID && device.getProductId() == mProductID) {
 
-                                Dlog.i("USB Permission Device Not Null Check");
+                                Dlog.i("USB Permission Complete");
                                 mUSBListener.onUsbConnected(device);
                             }
                         }

@@ -27,8 +27,8 @@ public class DeviceCommunicator {
 
     private UsbDeviceConnection mUsbDeviceConnection;
     private UsbInterface mUsbInterface;
-    private UsbEndpoint mUsbEndpoint;
-
+    private UsbEndpoint mUsbReadEndpoint;
+    private UsbEndpoint mUsbWriteEndpoint;
 
     DeviceCommunicator(Context context, UsbDevice device) throws IOException {
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -44,7 +44,7 @@ public class DeviceCommunicator {
         }
 
         if(mUsbInterface == null) {
-            Dlog.e("UsbInferface Exist");
+            Dlog.e("UsbInterface Exist");
             throw new IOException("Device Interface Error");
         }
 
@@ -54,9 +54,19 @@ public class DeviceCommunicator {
             throw new IOException("Device USB ClaimInterface Error");
         }
 
-        mUsbEndpoint = mUsbInterface.getEndpoint(0);
 
-        Dlog.d("USB EndpointType : " + mUsbEndpoint.getType() );
+        Dlog.d("USB Endpoint Number : " + mUsbInterface.getEndpointCount()+" / USB Interface Protocol : " + mUsbInterface.getInterfaceProtocol() );
+        for (int x = 0; x < mUsbInterface.getEndpointCount(); x++) {
+            UsbEndpoint endpoint = mUsbInterface.getEndpoint(x);
+            boolean bulk = endpoint.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK;
+            boolean crtl = endpoint.getType() == UsbConstants.USB_ENDPOINT_XFER_CONTROL;
+            boolean inDir = endpoint.getDirection() == UsbConstants.USB_DIR_IN;
+            boolean outDir = endpoint.getDirection() == UsbConstants.USB_DIR_OUT;
+            Dlog.d("ID: " + x + " / Bulk: " + bulk + " / Ctrl: " + crtl + " / In: " + inDir + " / Out: " + outDir ); // In = Read , Out = Write
+        }
+
+        mUsbReadEndpoint = mUsbInterface.getEndpoint(1); // In : True
+        mUsbWriteEndpoint = mUsbInterface.getEndpoint(0); // Out : True
 
     }
 
@@ -100,14 +110,15 @@ public class DeviceCommunicator {
         return commandLength;
     }
 
-    public int WriteBulkTransfer(byte[] buffer, int offset, int length)
-    {
-        return mUsbDeviceConnection.bulkTransfer(mUsbEndpoint, buffer, offset, length, 500);
-    }
 
     public int ReadBulkTransfer(byte[] buffer, int offset, int length)
     {
-        return mUsbDeviceConnection.bulkTransfer(mUsbEndpoint, buffer, offset, length, 500);
+        return mUsbDeviceConnection.bulkTransfer(mUsbReadEndpoint, buffer, offset, length, 500);
+    }
+
+    public int WriteBulkTransfer(byte[] buffer, int offset, int length)
+    {
+        return mUsbDeviceConnection.bulkTransfer(mUsbWriteEndpoint, buffer, offset, length, 500);
     }
 
 
