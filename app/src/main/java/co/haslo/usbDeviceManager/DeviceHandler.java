@@ -112,9 +112,9 @@ public class DeviceHandler extends Handler {
 
     }
 
-    public void sendData(String hexDataString) {
+    public void sendData(String[] hexStringArray) {
         if(mDeviceCommunicator != null) {
-            DeviceRegisterSetting.writeCommandHexData(mDeviceCommunicator, hexDataString);
+            DeviceRegisterSetting.writeBulkHexData(mDeviceCommunicator, hexStringArray);
         } else {
             Toast warningMessage = Toast.makeText(mainActivity.getApplicationContext(),"Please Connect USB Device: "+mDeviceCommunicator, Toast.LENGTH_SHORT);
             warningMessage.show();
@@ -122,13 +122,24 @@ public class DeviceHandler extends Handler {
 
     }
 
-    public void setCounter() {
-        Dlog.i("Set Data");
-        DeviceRegisterSetting.writeBulkHexData(mDeviceCommunicator);
+    public void resetData() {
+        Dlog.i("Reset Data");
+        if(mDeviceCommunicator != null) {
+            mDeviceCommunicator.DataTransferReset();
+        } else {
+            Toast warningMessage = Toast.makeText(mainActivity.getApplicationContext(),"Please Connect USB Device: "+mDeviceCommunicator, Toast.LENGTH_SHORT);
+            warningMessage.show();
+        }
     }
+
     public void startCounter() {
-        Dlog.i("Start Data");
-        DeviceRegisterSetting.writeBulkHexData(mDeviceCommunicator);
+        Dlog.i("Start Counter");
+        if(mDeviceCommunicator != null) {
+            DeviceRegisterSetting.counterTest(mDeviceCommunicator);
+        } else {
+            Toast warningMessage = Toast.makeText(mainActivity.getApplicationContext(),"Please Connect USB Device: "+mDeviceCommunicator, Toast.LENGTH_SHORT);
+            warningMessage.show();
+        }
     }
 
 

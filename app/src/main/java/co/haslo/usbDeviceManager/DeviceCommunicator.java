@@ -164,20 +164,11 @@ public class DeviceCommunicator {
         int writeBufferSize = 0;
         byte[] getBuffer = hexStringArrayToByte8bit2HexArray(bufferString);
         int getBufferSize = getBuffer.length;
-        /* Data 초기화 */ /*
-        Dlog.i("Write Buffer Length Before " + writeBuffer.length );
-        if(writeBuffer.length<16384) {
-            for(int i = writeBuffer.length; i < 16384; i++ ){
-                writeBuffer[i] = 0x00;
-            }
-        }
-        Dlog.i("Write Buffer Length After " + writeBuffer.length );
-        */
 
-        Dlog.i("Write Buffer Length Before " + writeBuffer.length );
         writeBuffer = Arrays.copyOf(getBuffer, defaultWriteSize);
-        Dlog.i("Write Buffer Length After " + writeBuffer.length );
-        for(int i = 0 ; i < 100; i++) {
+
+        /* Data Check */
+        for(int i = 0 ; i < getBufferSize; i++) {
             Dlog.i(String.format("TX[%05d] - %02X", i, writeBuffer[i]));
         }
         writeBufferSize = WriteBulkTransfer(writeBuffer, 0, writeBuffer.length);
@@ -186,19 +177,14 @@ public class DeviceCommunicator {
     }
 
     public void DataTransferReset(){
-        int length = 0;
+        int defaultWriteSize = 4096 * 4;
+        byte[] writeBuffer = new byte[defaultWriteSize];
 
-        byte[] buffer = new byte[16384];
-
-        for(int i = 0; i < 16384; i+=4) {
-            buffer[i] = 0;
-            buffer[i+1] = 0;
-            buffer[i+2] = 0;
-            buffer[i+3] = 0;
+        /* Data Reset */
+        for(int i = writeBuffer.length; i < 16384; i++ ){
+            writeBuffer[i] = 0x00;
         }
-
-        length = WriteBulkTransfer(buffer, 0, buffer.length);
-        Dlog.i("DataTransferReset Length : "+ length);
+        WriteBulkTransfer(writeBuffer, 0, writeBuffer.length);
 
     }
 

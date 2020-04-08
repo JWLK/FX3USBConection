@@ -24,9 +24,24 @@ public class DeviceRegisterSetting {
 
     }
 
-    public static void writeBulkHexData(DeviceCommunicator device)
+    public static void writeBulkHexData(DeviceCommunicator device, String[] mHexStringArray)
     {
-        String[] sendStringArray =  {"980100FF", "98000003","980100FF", "98000003","980100FF", "98000003","980100FF", "98000003","980100FF", "98000003","980100FF", "98000003"};
+        int[] sendIntArray = hexStringArrayToInt32bit8HexArray(mHexStringArray);
+        for(int ints : sendIntArray){
+            Dlog.d(String.format("0x%04X", ints));
+        }
+        try {
+            device.DataTransferBulkWrite(mHexStringArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Dlog.e(e.toString());
+        }
+
+    }
+
+    public static void counterTest(DeviceCommunicator device)
+    {
+        String[] sendStringArray =  {"980100FF", "98000003"};
         int[] sendIntArray = hexStringArrayToInt32bit8HexArray(sendStringArray);
         for(int ints : sendIntArray){
             Dlog.d(String.format("0x%04X", ints));
@@ -40,14 +55,4 @@ public class DeviceRegisterSetting {
 
     }
 
-    public static void counterSet(DeviceCommunicator device)
-    {
-        device.DataTransferSingleWrite((short) 0x9801, (short) 0x00FF);
-    }
-
-
-    public static void counterStart(DeviceCommunicator device)
-    {
-        device.DataTransferSingleWrite((short) 0x9800, (short) 0x0003);
-    }
 }

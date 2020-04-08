@@ -97,13 +97,13 @@ public class MainActivity extends Activity {
         });
 
         /**
-         * Set Button
+         * Reset Button
          */
-        menuBoxSetButton =(Button)findViewById(R.id.menu_box_counterSet);
+        menuBoxSetButton =(Button)findViewById(R.id.menu_box_reset);
         menuBoxSetButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDeviceHandler.setCounter();
+                mDeviceHandler.resetData();
             }
         });
 
@@ -128,14 +128,16 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 //Dlog.i("sendBoxButton");
                 String sendBoxData = sendBoxEdit.getText().toString();
+                String[] hexStringArray = { sendBoxData };
                 int sendBoxDataLength = sendBoxData.length();
                 Dlog.i("Data Length : " + sendBoxDataLength + System.lineSeparator() );
+
                 if (sendBoxDataLength == 0) {
                     return;
                 } else if(sendBoxDataLength == 8){
                     //logBoxText.append(sendBoxData + System.lineSeparator());
                     Dlog.i("Hex Number : " + sendBoxData + System.lineSeparator() );
-                    mDeviceHandler.sendData(sendBoxData);
+                    mDeviceHandler.sendData(hexStringArray);
                     sendBoxEdit.getText().clear();
                 } else {
                     Toast warningMessage = Toast.makeText(getApplicationContext(),"Please Enter 8 Hexadecimal numbers ", Toast.LENGTH_SHORT);
