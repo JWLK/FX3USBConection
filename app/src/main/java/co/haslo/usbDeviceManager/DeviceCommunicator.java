@@ -9,8 +9,9 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-import co.haslo.util.ConvertData;
+import static co.haslo.util.ConvertData.hexStringArrayToByte8bit2HexArray;
 import co.haslo.util.Dlog;
 
 public class DeviceCommunicator {
@@ -154,6 +155,34 @@ public class DeviceCommunicator {
 
 
         return length;
+    }
+
+    //bufferString =  {"980100FF","98000003"};
+    public int DataTransferBulkWrite(String[] bufferString){
+        int defaultWriteSize = 4096 * 4;
+        byte[] writeBuffer = new byte[defaultWriteSize];
+        int writeBufferSize = 0;
+        byte[] getBuffer = hexStringArrayToByte8bit2HexArray(bufferString);
+        int getBufferSize = getBuffer.length;
+        /* Data 초기화 */ /*
+        Dlog.i("Write Buffer Length Before " + writeBuffer.length );
+        if(writeBuffer.length<16384) {
+            for(int i = writeBuffer.length; i < 16384; i++ ){
+                writeBuffer[i] = 0x00;
+            }
+        }
+        Dlog.i("Write Buffer Length After " + writeBuffer.length );
+        */
+
+        Dlog.i("Write Buffer Length Before " + writeBuffer.length );
+        writeBuffer = Arrays.copyOf(getBuffer, defaultWriteSize);
+        Dlog.i("Write Buffer Length After " + writeBuffer.length );
+        for(int i = 0 ; i < 100; i++) {
+            Dlog.i(String.format("TX[%05d] - %02X", i, writeBuffer[i]));
+        }
+        writeBufferSize = WriteBulkTransfer(writeBuffer, 0, writeBuffer.length);
+
+        return writeBufferSize;
     }
 
     public void DataTransferReset(){

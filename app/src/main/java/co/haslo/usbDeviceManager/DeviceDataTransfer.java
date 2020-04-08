@@ -56,7 +56,7 @@ public class DeviceDataTransfer {
                     byte Data01 = readBuffer[i + 1];
                     byte Data00 = readBuffer[i + 0];
                     byte[] DataArray = {Data03,Data02,Data01,Data00};
-                    Dlog.i(i +" - "+ConvertData.byteArrayToHexString(DataArray));
+                    Dlog.i("RX["+ i +"] - "+ConvertData.byteArrayToHexString(DataArray));
                 }
 
 
