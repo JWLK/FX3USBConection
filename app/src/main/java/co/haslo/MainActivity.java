@@ -26,7 +26,7 @@ import co.haslo.usbDeviceManager.DeviceManager;
 import co.haslo.usbDeviceManager.DeviceRegisterSetting;
 import co.haslo.util.Dlog;
 
-
+/* Update Data Stream */
 
 public class MainActivity extends Activity {
 
